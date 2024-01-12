@@ -1,0 +1,137 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{braket}
+\usepackage{minted}
+\usepackage{pseudo}
+\usepackage{mathtools}
+\usepackage{tabto}
+\usepackage{float}
+\usepackage{titlesec}
+\usetikzlibrary{shapes.geometric}
+\usepackage{lastpage}
+\usepackage{tocloft}
+\title{Peg Solitaire}
+\author{
+\centering
+\begin{tabular}{c}
+    Asmus Tørsleff\\
+    qjv778@alumni.ku.dk (asmus.torsleff@gmail.com)\\
+\end{tabular}}
+\date{\today}
+\setcounter{tocdepth}{3}
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\begin{document}
+\maketitle
+%\tableofcontents
+\section{introduction}
+Let $b$ be a board of size $n$, this can be represented as a $n$ bit binary number. 
+A 1 in the $i$'th position in $b$ represents a peg in the $i$'th board position, a 0 represents a cavity.
+$$b=b_0b_1...b_{n-2}b_{n-1},\ b_i\in \{0,1\}$$
+\section*{definitions}
+Let $p(b)=x$ where $x$ is the the number of ones in $b$, aka. the pop count. 
+
+\vspace{\baselineskip}
+\noindent
+Let $a(b, i)=b'$ be the funtion negating the i'th bit and its neighbours. $a(b,i)$ is only defined when $b_{i} = 1$ and $b_{i-1} \neq b_{i+1}$.  
+Applying $a$ equates to a move and removes a peg from the board $p(b')=p(b)-1$.
+
+\vspace{\baselineskip}
+\noindent
+We can apply $a$ repeatedly to $b$ until it is no longer defined for any $i$. 
+The board, $s$, we get at the end we will call a solution.
+If we do this in every posible way we get a set $S(b)$ of all solutions for $b$.
+The set of optimal solutions is $O(b)=\{s\in S(b)\ |\ \forall_{s'\in S(b)}\ p(s)\le p(s')\}$
+
+\vspace{\baselineskip}
+\noindent
+Let $f(b,m)=b'$ be the function applying $a(b,i_j)$ $m$ times, with each application taking $b$ closer to an optimal solution. 
+If $a$ can not be applied $m$ times before becoming undefined then $f(b,m) = b',\ b'\in O(b)$. 
+
+\vspace{\baselineskip}
+\noindent
+Let $\cdot$ be the board concatenation operator. $b=x\cdot y=x_0x_1..x_{n-1}y_0y_1..y_{n-1} $. 
+
+\vspace{\baselineskip}
+\noindent
+Let $b^x=b^{x-1}\cdot b$, where $b^0=id$ is the board such that $b =b\cdot id=id\cdot b$. 
+
+\vspace{\baselineskip}
+\noindent
+Let $|b|$ be the board length operator. $|b|=n$. 
+
+\vspace{\baselineskip}
+\noindent
+Let $o(b) = f(b,|b|)\in O(b)$
+
+\vspace{\baselineskip}
+\noindent
+Let $x_i$ be the position of the $i$'th 1 in $b$. 
+Let $w(b) = x_{p(b)}-x_1$
+
+\vspace{\baselineskip}
+\noindent
+Let $r(b)$ be the function that reverses the board. $r(x\cdot y)=r(y) \cdot r(x),\ r(1) = 1,\ r(0) = 0$
+
+
+\section{Conjectures}
+\begin{enumerate}
+    \item $|b|\ge p(b)$
+    \item $p(b)\ge p(f(b,m))$
+    \item $p(f(b,m))\ge p(b)-m$
+    \item $p(b) \le 1 \Rightarrow p(f(b,m)) = p(b)$
+    \item $p(b) = |b| \Rightarrow p(f(b,m)) = |b|$
+    \item $p(b)\ge 0$
+    \item $w(b)\le |b|$ 
+    \item $p(b) = p(r(b))$
+    \item $w(b) = w(r(b))$
+    \item $p(o(b)) = p(o(r(b)))$
+    \item $b = b'\cdot 0^3\cdot b'',\ p(o(b)) = p(o(b'))+p(o(b''))$
+    \item $b = b'\cdot b'',\ p(o(b)) \le p(o(b'))+p(o(b''))$
+    \item $w(f(b,x))\le w(b)+2$ 
+    \item $b=0\cdot 1^n\cdot 0,\ p(o(b)) = \frac{n+1}{2}$ 
+\end{enumerate}
+
+\section{Proofs}
+\subsection{$|b|\ge p(b)$}
+There can never be more ones in $b$ than there are bits. 
+
+\subsection{$p(b)\ge p(f(b,m))$}
+Each application of $a$ removes a one. Thus $f$ can never add ones. 
+
+\subsection{$p(f(b,m))\ge p(b)-m$}
+Each application of $a$ removes a one. $f(b,m)$ applies $a\ m$ or less times. Thus $f(b,m)$ can never remove more than $m$ ones. 
+
+\subsection{$p(b) \le 1 \Rightarrow p(f(b,m)) = p(b)$}
+If $p(b) \le 0$ then there are not enough ones to apply $a$. 
+Therefore $f$ will apply $a$ zero times, thus removing no ones.
+
+\subsection{$p(b) = |b| \Rightarrow p(f(b,m)) = |b|$}
+If $p(b) = |b| $ then there are not enough zeroes to apply $a$. 
+Therefore $f$ will apply $a$ zero times, thus removing no ones.
+
+\subsection{$p(b)\ge 0$}
+We can never have a negative number of ones on a board.
+
+\subsection{$w(b)\le |b|$}
+Since $w(b) = x_{p(b)}-x_1$ where $0\le x_1\le x_{p(b)} \le |b|$ then $w$ is maximized when $x_1=0$.
+Then we have $w(b) =x_{p(b)}\le |b|$. 
+
+\subsection{$p(b) = p(r(b))$}\label{rev_count}
+Changing the order of the bits does not change the number of ones.
+
+\subsection{$w(b) = w(r(b))$}
+$w(b) = x_{p(b)}-x_1= (|b|-x_{1})-(|b|-x_{p(b)})=w(r(b))$
+
+\subsection{$p(o(b)) = p(o(r(b)))$}
+If we can apply $a(b,i)$ then we can also apply $a(r(b),|b|-i-1)$. 
+So $f(b,m) = r(f(r(b),m))$ and then $o(b)=r(o(r(b)))$ and by \ref{rev_count} we have $p(o(b)) = p(r(o(r(b))))=p(o(r(b)))$
+\end{document}
+
