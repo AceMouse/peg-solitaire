@@ -35,7 +35,8 @@
 Let $b$ be a board of size $n$, this can be represented as a $n$ bit binary number. 
 A 1 in the $i$'th position in $b$ represents a peg in the $i$'th board position, a 0 represents a cavity.
 $$b=b_0b_1...b_{n-2}b_{n-1},\ b_i\in \{0,1\}$$
-\section*{definitions}
+
+\section{definitions}
 Let $p(b)=x$ where $x$ is the the number of ones in $b$, aka. the pop count. 
 
 \vspace{\baselineskip}
@@ -73,8 +74,11 @@ Let $o(b) = f(b,|b|)\in O(b)$
 
 \vspace{\baselineskip}
 \noindent
-Let $x_i$ be the position of the $i$'th 1 in $b$. 
-Let $w(b) = x_{p(b)}-x_1$
+Let $z_{i}(b) = x_i$ be the position of the $i$'th 1 in $b$. $0<i\le p(b)$. 
+
+\vspace{\baselineskip}
+\noindent
+Let $w(b) = z_{p(b)}(b)-z_1(b)$
 
 \vspace{\baselineskip}
 \noindent
@@ -89,14 +93,15 @@ Let $r(b)$ be the function that reverses the board. $r(x\cdot y)=r(y) \cdot r(x)
     \item $p(b) \le 1 \Rightarrow f(b,m) = b$
     \item $p(b) = |b| \Rightarrow f(b,m) = b$
     \item $p(b)\ge 0$
-    \item $w(b)\le |b|$ 
+    \item $0 \le z_i(b)\le |b|$ 
     \item $p(b) = p\circ r(b)$
     \item $w(b) = w\circ r(b)$
     \item $p\circ o(b) = p\circ o\circ r(b)$
-    \item $b = b'\cdot 0^3\cdot b'',\quad p\circ o(b) = p\circ o(b') + p\circ o(b'')$
-    \item $b = b'\cdot b'',\quad p\circ o(b) \le p\circ o(b') + p\circ o(b'')$
+    \item $b = b'\cdot b'',\quad p\circ f(b,m_1+m_2) \le p\circ f(b',m_1) + p\circ f(b'',m_2)$
+    \item $z_1(b)-1\le z_1(f(b,x))$
     \item $w\circ f(b,x)\le w(b)+2$ 
-    \item $b=0\cdot 1^n\cdot 0,\ p\circ o(b) = \frac{n+1}{2}$ 
+    \item $b = b'\cdot 0^3\cdot b'',\quad p\circ f(b,m_1+m_2) = p\circ f(b',m_1) + p\circ f(b'',m_2)$
+    \item $b=0\cdot 1^n\cdot 0,\ p\circ o(b) = \lceil\frac{n}{2}\rceil$ 
 \end{enumerate}
 
 \section{Proofs}
@@ -120,18 +125,79 @@ Therefore $f$ will apply $a$ zero times, thus making no changes.
 \subsection{$p(b)\ge 0$}
 We can never have a negative number of ones on a board.
 
-\subsection{$w(b)\le |b|$}
-Since $w(b) = x_{p(b)}-x_1$ where $0\le x_1\le x_{p(b)} \le |b|$ then $w$ is maximized when $x_1=0$.
-Then we have $w(b) =x_{p(b)}\le |b|$. 
+\subsection{$0 \le z_i(b)\le |b|$}
+Since we only have bits 0 to $|b|$ the $i$'th 1 can never be outside this range.
 
 \subsection{$p(b) = p\circ r(b)$}\label{rev_count}
 Changing the order of the bits does not change the number of ones.
 
 \subsection{$w(b) = w\circ r(b)$}
-$w(b) = x_{p(b)}-x_1= (|b|-x_{1})-(|b|-x_{p(b)})=w\circ r(b)$
+$w(b) = z_{p(b)}(b)-z_1(b)= (|b|-z_{1}(b))-(|b|-z_{p(b)}(b))=w\circ r(b)$
 
 \subsection{$p\circ o(b) = p\circ o\circ r(b)$}
 If we can apply $a(b,i)$ then we can also apply $a(r(b),|b|-i-1)$. 
 So $f(b,m) = r\circ f(r(b),m)$ and then $o(b)=r\circ o\circ r(b)$ and by \ref{rev_count} we have $p\circ o(b) = p\circ r\circ o\circ r(b)=p\circ o\circ r(b)$.
+
+\subsection{$b = b'\cdot b'',\quad p\circ f(b,m_1+m_2) \le p\circ f(b',m_1) + p\circ f(b'',m_2)$ }
+Any valid move order in $b'$ and $b''$ is naturally also valid in $b$. 
+Thus we can accieve equality by executing the same moves. 
+Sometimes though, we can do better: 
+\begin{equation*}
+\begin{split}
+    p\circ f (01,1) = p\circ f (10,1) &= 1 \\
+    p\circ f (0110,2) = p(0001) &= 1 \\
+    p\circ f (01,1) + p\circ f (10,1) = 2 &\ge 1 = p\circ f (0110,2) 
+\end{split}
+\end{equation*}
+
+\subsection{$z_1(b)-1\le z_1(f(b,x))$}
+We want to show that a board $b = 0^{n_1}1?^{n_2}$ can never evolve into $0^{n_1-2}1?^{n_2+2}$
+For $n_1<2$ this is obvious. 
+For $n_1>2$ it is the same as for $n_1=2$. 
+Thus we want to prove that a board $b = 001?^{n}$ can never become $1?^{n+2}$. 
+\\
+We start by showing that a board $b = 00?^{n}$ can never become $1?^{n+1}$. 
+We do this by induction. \\
+Base case $n=0$:\\
+$b = 00$. there are no moves so it can not become $1?$. \\
+Base case $n=1$: \\
+$b \in {000, 001}$ in either case there are no moves and so it can not become $1??$. \\
+Base case $n=2$: \\
+$b \in {0000, 0001, 0010, 0011}$. the first 3 do not have any available moves and so can not become $1???$ the fourth becomes $0100$ after its only available move. \\
+Case $n\ge 3$: \\
+We can never get a 1 in the first position unless we at some point have one in the second position.
+If we somehow get a 1 in the second position we know that it has to be the result of a move that cleared the third and fourth. 
+So we have $b' = 0100?^{n-2}$. By the inductive hypothesis it is imposible to get a one in the third position which is requred to make a move resulting in a 1 in the first position. 
+
+\vspace{\baselineskip}
+\noindent
+Now we show that a board $b = 001?^{n}$ can never become $1?^{n+2}$.  
+When $n=0$:\\
+$b = 001$. there are no moves so it can not become $1??$. \\
+When $n=1$: \\
+$b \in {0010, 0011}$ in the first case there are no moves and so it can not become $1??$. The second case becomes $0100$ after the only valid move.\\
+when $n=2$: \\
+$b \in {00100, 00101, 00110, 00111}$. the first 2 do not have any available moves and so can not become $1???$. The third becomes either $01000$ or $00001$ after its only available moves. The fourth becomes $01001$ after its only available move. \\
+Case $n\ge 3$: \\
+We can never get a 1 in the first position unless we at some point have one in the second position.
+If we somehow get a 1 in the second position we know that it has to be the result of a move that cleared the third and fourth. 
+So we have $b' = 0100?^{n-2}$. By what we previously showed it is imposible to get a 1 in the third position which is requred to make a move resulting in a 1 in the first position. \\
+QED.\\
+By symmetry $z_{p(b)}(b)+1\ge z_{p(b)}(f(b,x))$
+
+\subsection{$w\circ f(b,x)\le w(b)+2$}
+\begin{equation*}
+\begin{split}
+    w\circ f(b,x)&= z_{p(f(b,x))}(f(b,x))-z_{1}(f(b,x))\\
+    &\le (z_{p(b)}(b)+1)-(z_{1}(b)-1)\quad \text{by 12}\\ 
+    &= z_{p(b)}(b)-z_{1}(b)+2 \\
+    &= w(b)+2\\
+\end{split}
+\end{equation*}
+
+\subsection{$b = b'\cdot 0^3\cdot b'',\quad p\circ f(b,m_1+m_2) = p\circ f(b',m_1) + p\circ f(b'',m_2)$} 
+Any valid move order in $b'$ and $b''$ is naturally also valid in $b$. 
+Thus we can accieve equality by executing the same moves. 
+We can never do better as, by 12, after m moves there can not be a 1 in the center as it is 2 away from any 1 in $b'$ and $b''$. This means that a 1 from $b'$ can never be adjacent to a 1 from $b''$ and thus no extra moves are available. 
 \end{document}
 
