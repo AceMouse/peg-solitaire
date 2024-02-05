@@ -199,5 +199,12 @@ By symmetry $z_{p(b)}(b)+1\ge z_{p(b)}(f(b,x))$
 Any valid move order in $b'$ and $b''$ is naturally also valid in $b$. 
 Thus we can accieve equality by executing the same moves. 
 We can never do better as, by 12, after m moves there can not be a 1 in the center as it is 2 away from any 1 in $b'$ and $b''$. This means that a 1 from $b'$ can never be adjacent to a 1 from $b''$ and thus no extra moves are available. 
+\subsection{$b=0\cdot 1^n\cdot 0,\ p\circ o(b) = \lceil\frac{n}{2}\rceil$ }
+Base case $n=1$: \\
+There are no moves so $p\circ o(b)=1=\lceil\frac{1}{2}\rceil=\lceil\frac{n}{2}\rceil$\\
+Base case $n=2$: \\
+There is one move so $p\circ o(b)=1=\lceil\frac{2}{2}\rceil=\lceil\frac{n}{2}\rceil$\\
+Inductive case $n\ge2$: \\
+after one move we have $b = 0\cdot 1^{n-2}\cdot 001$ and since there is two zeroes between the group and the single one and the single one can not move closer to the group, they can not interact. So we can compute them seperately. By the inductive hypothesis we have that $p\circ o(0\cdot 1^{n-2}\cdot 0)=\lceil\frac{n-2}{2}\rceil$. There for we end up with $p\circ o(b)=p\circ o(0\cdot 1^{n-2}\cdot 0)+p\circ o(01)=\lceil\frac{n-2}{2}\rceil+1=\lceil\frac{n}{2}\rceil$\\
 \end{document}
 
