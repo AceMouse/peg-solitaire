@@ -39,14 +39,25 @@ def _dfs(b, l, ones):
     cashe[(b,l)] = m
     return m
 
-def dfs(b, l, ones):
+def dfs(b, l, ones, min_groups = 1):
     if ones <= 7: 
         return _dfs(b,l,ones)
     if (b,l) in cashe:
         return cashe[(b,l)]
-    end = 0 
+    if ones == l: 
+        return ones 
 
+    end = 0 
+    
     m = ones
+    if min_groups == 1:
+        groups = b&0b1 
+        for i in range(l-2):
+            groups += int((b>>i)&0b11 == 0b10)
+        if groups == 1: 
+            return (ones+1) // 2
+        min_groups = groups
+    
     ones_before_cut = 0 
     for i in range(l-2):
         ones_before_cut += b>>i & 0b1
@@ -56,7 +67,7 @@ def dfs(b, l, ones):
                 m = min(dfs(b>>(i+1), l-(i+1), ones - ones_before_cut) + 
                         dfs(b&((1<<i)-1), i, ones_before_cut-1), m)
             else:            
-                m = min(dfs(b,l, ones-1), m)
+                m = min(dfs(b,l, ones-1, min_groups-1), m)
             b ^= 0b111 << i #undo move.  
         if (b>>i) & 0b111 == 0b110: #check if valid move. 
             b ^= 0b111 << i #perform move. 
@@ -64,7 +75,7 @@ def dfs(b, l, ones):
                 m = min(dfs(b>>(i+3), l-(i+3), ones - ones_before_cut-2) + 
                         dfs(b&((1<<(i+2))-1), i+2, ones_before_cut+1), m)
             else:            
-                m = min(dfs(b,l, ones-1), m)
+                m = min(dfs(b,l, ones-1, min_groups-1), m)
             b ^= 0b111 << i #undo move.  
     cashe[(b,l)] = m
     return m

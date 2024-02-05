@@ -1,37 +1,77 @@
-from after_move_split import split as a_solve 
-from split import dfs as s_solve
-from memo import dfs as m_solve
-from naive import dfs as n_solve
-
+import subprocess
 import random
 import time 
 def format_time(in_sec):
-    return f"{in_sec:.4}"
+    return f"{in_sec:.4f}"
+
+def after_solve(b,l,c):
+    return subprocess.run(args=["./after", f"{b:b}".zfill(l)], capture_output=True).returncode
+def count_solve(b,l,c):
+    return subprocess.run(args=["./count", f"{b:b}".zfill(l)], capture_output=True).returncode
+def count_no_solve(b,l,c):
+    return subprocess.run(args=["./count_no", f"{b:b}".zfill(l)], capture_output=True).returncode
+def naive_solve(b,l,c):
+    return subprocess.run(args=["./naive", f"{b:b}".zfill(l)], capture_output=True).returncode
+def memo_solve(b,l,c):
+    return subprocess.run(args=["./memo", f"{b:b}".zfill(l)], capture_output=True).returncode
 
 def measure(b,i,c,sol):
     t = -time.time()
+    global cashe 
+    cashe = dict()
     ans = sol(b,i,c) 
     return (ans, t+time.time())
 
-time_taken = [0,0,0,0]
-for i in range(3,80):
-    print(i)
-    for x in range(10):
-        b = random.getrandbits(i)
-        c = b.bit_count()
-        a_ans, a_t = measure(b,i,c,a_solve)
-        time_taken[0] += a_t 
-        s_ans, s_t = measure(b,i,c,s_solve)
-        time_taken[1] += s_t
-#        m_ans, m_t = measure(b,i,c,m_solve)
-#        time_taken[2] += m_t
-#        ans, t = measure(b,i,c,n_solve)
-#        time_taken[3] += t
-        if s_ans != a_ans:
-            print(f"Fault on board {b}! got o_ans: {a_ans} expected {s_ans}")
+to_test = [after_solve, count_solve, count_no_solve, memo_solve, naive_solve]
+time_taken = [[] for _ in range(len(to_test))]
+ans = [[] for _ in range(len(to_test))]
+bss = [[random.getrandbits(i) for _ in range(10000)] for i in range(3,64)]
+avg_f = open("avg.out", "w")
+med_f = open("med.out", "w")
+min_f = open("min.out", "w")
+max_f = open("max.out", "w")
+files = [avg_f, min_f, max_f, med_f]
+def _print(*s, end="\n", files=avg_f):
+    for file in files:
+        print(*s, end=end, file=file)
 
-    print(f"a_t:{format_time(time_taken[0])}")
-    print(f"s_t:{format_time(time_taken[1])}")
-#    print(f"m_t:{format_time(time_taken[2])}")
- #   print(f"n_t:{format_time(time_taken[3])}")
+names = ['n', '"DM1"', '"DM1+2"', '"DN1+2"', '"M"', '"N"']
+on = [True]*len(to_test)
+for n in names:
+    _print(f"{n}\t", end = "", files = files)
+_print(files = files)
+cutoff = 0.02
+for x,bs in enumerate(bss):
+    i = x+3 
+    _print(f"{i}\t", end = "", files = files)
+    for n,sol in enumerate(to_test):
+        if not on[n]:
+            _print(f"{cutoff:.10f}\t", end = "", files = files)
+            continue
+        ts = []
+        for b in bs:
+            c = b.bit_count()
+            a, t = measure(b,i,c,sol)
+            ans[n].append(a)
+            ts += [t]
+        ts.sort()
+        avg_t = sum(ts)/len(ts)
+        median_t = ts[len(bs)//2]
+        _print(f"{ts[-1]:.10f}\t", end = "", files = [max_f])
+        _print(f"{ts[0]:.10f}\t", end = "", files = [min_f])
+        _print(f"{median_t:.10f}\t", end = "", files = [med_f])
+        if avg_t > cutoff:
+            _print(f"{cutoff:.10f}\t", end = "", files = [avg_f])
+            on[n] = False
+        else: 
+            _print(f"{avg_t:.10f}\t", end = "", files = [avg_f])
+    _print(files = files)
+    if not True in on:
+        break
+
+for an in ans[1:]:
+    for i,a in enumerate(an):
+        if ans[0][i] != a:
+            print(f"Error! expected {ans[0][i]}, got {a}. on board {f'{bss[i//1000][i%1000]:b}'.zfill(i//1000 + 3)}")
+
 
