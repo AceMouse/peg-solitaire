@@ -72,4 +72,4 @@ for an in ans[1:]:
         if ans[0][i] != a:
             print(f"Error! expected {ans[0][i]}, got {a}. on board {f'{bss[i//1000][i%1000]:b}'.zfill(i//1000 + 3)}")
 
-subprocess.run(args=["./gnuplot", "-p", "-c", "avg.p"])
+subprocess.run(args=["gnuplot", "-p", "-c", "avg.p"])
