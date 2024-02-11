@@ -7,6 +7,11 @@ def solve(board, mark = '1'):
         ones += c 
     print(split(b, len(board), ones))
 
+cashe = dict()    
+def _split(b, l, ones):
+    cashe = dict()
+    return split(b,l,ones)
+
 def split(b, l, ones):
     ones_before_cut = 0 
     end = 0
@@ -23,7 +28,6 @@ def split(b, l, ones):
                 return m 
     return dfs(b,l,ones)
 
-cashe = dict()    
 def _dfs(b, l, ones):
     if ones <= 1: 
         return ones

@@ -7,8 +7,7 @@
 
 using namespace std; 
   
-
-uint8_t dfs(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint8_t> (&cashe)[64]){
+uint8_t dfs(__uint128_t b, uint8_t l, uint8_t ones, unordered_map<__uint128_t, uint8_t> (&cashe)[128]){
     if (ones <= 1){
         return ones;
     }
@@ -18,8 +17,8 @@ uint8_t dfs(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint8_t
 
     uint8_t m = ones;
     uint8_t ones_before_cut = 0;
-    uint64_t mask = 0b111;
-    uint64_t o = 1;
+    __uint128_t mask = 0b111;
+    __uint128_t o = 1;
     for (uint8_t i = 0  ; i < l-2; i++) {
         ones_before_cut += b>>i & 0b1;
         if (((b>>i) & mask) == 0b011){
@@ -72,10 +71,10 @@ uint8_t dfs(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint8_t
 
 }
 
-uint8_t _split(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint8_t> (&cashe)[64]){
+uint8_t _split(__uint128_t b, uint8_t l, uint8_t ones, unordered_map<__uint128_t, uint8_t> (&cashe)[128]){
     uint8_t ones_before_cut = 0;
     uint8_t end = 0;
-    uint64_t o = 1; 
+    __uint128_t o = 1; 
     for (uint8_t i = 0; i<l-3; i++){
         ones_before_cut += (b>>i)&0b1;
         if (((b>>i) & 0b1111) == 0b0001){
@@ -95,13 +94,13 @@ uint8_t _split(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint
     }
     return dfs(b,l,ones, cashe);
 }
-uint8_t split(uint64_t b, uint8_t l, uint8_t ones){
-    unordered_map<uint64_t, uint8_t> cashe[64];
+uint8_t split(__uint128_t b, uint8_t l, uint8_t ones){
+    unordered_map<__uint128_t, uint8_t> cashe[128];
     return _split(b, l, ones, cashe);
 }
 int main(int argc, char* argv[]) 
 { 
-    uint64_t b = 0;
+    __uint128_t b = 0;
     uint8_t ones = 0;
     uint8_t l = 0;
     if (argc != 2){
@@ -109,7 +108,7 @@ int main(int argc, char* argv[])
     }
     char * board = argv[1];
     while(*board){
-        uint64_t c = *board - '0';
+        __uint128_t c = *board - '0';
         b = (b<<1) | c;
         ones += c;
         l++;

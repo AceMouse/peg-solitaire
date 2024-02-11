@@ -7,21 +7,22 @@
 
 using namespace std; 
   
-uint64_t dfs(uint64_t b, uint64_t l, uint64_t ones, unordered_map<uint64_t, uint64_t> cashe){
+uint8_t dfs(uint64_t b, uint8_t l, uint8_t ones, unordered_map<uint64_t, uint8_t> &cashe){
     if (cashe.find(b) != cashe.end()){
         return cashe[b];
     }
 
-    uint64_t m = ones;
-    for (uint64_t i = 0  ; i < l-2ULL; i++) {
+    uint8_t m = ones;
+    uint64_t mask = 0b111;
+    for (uint8_t i = 0  ; i < l-2; i++) {
         uint64_t x = ((b>>i) & 0b111);
         if (x == 0b011 || x == 0b110){
-            b ^= 0b111ULL << i;
-            uint64_t res = dfs(b,l,ones-1ULL, cashe);
+            b ^= mask << i;
+            uint8_t res = dfs(b,l,ones-1, cashe);
             if (res < m){
                 m = res;
             }
-            b ^= 0b111ULL << i;
+            b ^= mask << i;
         }
     }
     cashe[b] = m;
@@ -32,8 +33,8 @@ uint64_t dfs(uint64_t b, uint64_t l, uint64_t ones, unordered_map<uint64_t, uint
 int main(int argc, char* argv[]) 
 { 
     uint64_t b = 0;
-    uint64_t ones = 0;
-    uint64_t l = 0;
+    uint8_t ones = 0;
+    uint8_t l = 0;
     if (argc != 2){
         printf("please provide a board!");
     }
@@ -45,8 +46,8 @@ int main(int argc, char* argv[])
         l++;
         board++;
     }
-    unordered_map<uint64_t, uint64_t> cashe;
-    uint64_t res = dfs(b, l, ones, cashe);
-    printf("%" PRIu64 "\n", res);
+    unordered_map<uint64_t, uint8_t> cashe;
+    uint8_t res = dfs(b, l, ones, cashe);
+    printf("%u\n", res);
     return res; 
 } 

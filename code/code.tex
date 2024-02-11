@@ -49,15 +49,15 @@ For this board variant I have proven a few properties, see the pdf in the math p
 I have implemented multiple solutions in C++, see the repository\footnote{\url{https://github.com/AceMouse/peg-solitaire/tree/main/code}}, and run some benchmarks:
 N represents the naive approach. 
 M represents the dynamic programming approach. 
-DN1+2 represents the naive approach, and takes advantage of both of the fracts from the domain knowledge section. 
-DM1+2 represents the dynamic programming approach, and takes advantage of both of the fracts from the domain knowledge section. 
+DN1+2 represents the naive approach, and takes advantage of both of the facts from the domain knowledge section. 
+DM1+2 represents the dynamic programming approach, and takes advantage of both of the facts from the domain knowledge section. 
 DM1 represents the dynamic programming approach, and takes advantage of only the devide strategy from the domain knowledge section. 
+DM1w is identical to DM1 but uses a wider 128 bit datatype to store the boards allowing it to handle boards larger than 64 bits. 
 
 \includegraphics[width=\textwidth]{./cpp_comparison}
 The benchmark consists of generating 10.000 random boards for each board size, running the programs on these boards and then taking the average time for each program on each board size.
 
-We can see here that DM1 and DM1+2 perform nearly identically, with DM1+2 being a bit slower on average, it seems the extra processing needed to check if the second fact can be applied is not worth it. We can also see that using the facts pressented makes it feasible to solve boards that are over twice as large. 
-Curiously the dynamic programming approach does worse than the naive approach when running it in C++ with -O3 optimisation level. When implemented in Python it is better to use memoization. I suspect that if we were to reuse the cashe between runs the results would be better for this approach. 
+We can see here that DM1 and DM1+2 perform nearly identically, with DM1+2 being a bit slower on average, it seems the extra processing needed to check if the second fact can be applied is not worth it. We can also see that using the facts pressented makes it feasible to solve boards that are about twice as large as what is possible using just memoization. 
 
 
 \end{document}

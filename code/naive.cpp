@@ -7,17 +7,18 @@
 
 using namespace std; 
   
-uint64_t dfs(uint64_t b, uint64_t l, uint64_t ones){
-    uint64_t m = ones;
-    for (uint64_t i = 0  ; i < l-2ULL; i++) {
-        uint64_t x = ((b>>i) & 0b111);
+uint64_t dfs(uint64_t b, uint8_t l, uint8_t ones){
+    uint8_t m = ones;
+    uint64_t mask = 0b111;
+    for (uint8_t i = 0; i < l-2; i++) {
+        uint64_t x = ((b>>i) & mask);
         if (x == 0b011 || x == 0b110){
-            b ^= 0b111ULL << i;
-            uint64_t res = dfs(b,l,ones-1ULL);
+            b ^= mask << i;
+            uint8_t res = dfs(b,l,ones-1);
             if (res < m){
                 m = res;
             }
-            b ^= 0b111ULL << i;
+            b ^= mask << i;
         }
     }
     return m;
@@ -26,8 +27,8 @@ uint64_t dfs(uint64_t b, uint64_t l, uint64_t ones){
 int main(int argc, char* argv[]) 
 { 
     uint64_t b = 0;
-    uint64_t ones = 0;
-    uint64_t l = 0;
+    uint8_t ones = 0;
+    uint8_t l = 0;
     if (argc != 2){
         printf("please provide a board!");
     }
@@ -39,7 +40,7 @@ int main(int argc, char* argv[])
         l++;
         board++;
     }
-    uint64_t res = dfs(b, l, ones);
-    printf("%" PRIu64 "\n", res);
+    uint8_t res = dfs(b, l, ones);
+    printf("%u\n", res);
     return res; 
 } 
