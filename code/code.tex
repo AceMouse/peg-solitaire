@@ -54,10 +54,14 @@ DM1+2 represents the dynamic programming approach, and takes advantage of both o
 DM1 represents the dynamic programming approach, and takes advantage of only the devide strategy from the domain knowledge section. 
 DM1w is identical to DM1 but uses a wider 128 bit datatype to store the boards allowing it to handle boards larger than 64 bits. 
 
-\includegraphics[width=\textwidth]{./cpp_comparison}
+\includegraphics[width=\textwidth]{./cpp_comparison_avg}
 The benchmark consists of generating 10.000 random boards for each board size, running the programs on these boards and then taking the average time for each program on each board size.
 
 We can see here that DM1 and DM1+2 perform nearly identically, with DM1+2 being a bit slower on average, it seems the extra processing needed to check if the second fact can be applied is not worth it. We can also see that using the facts pressented makes it feasible to solve boards that are about twice as large as what is possible using just memoization. 
+Here are some more graphs of the maximum, minimum and median time taken on each board size:
+\includegraphics[width=\textwidth]{./cpp_comparison_max}
+\includegraphics[width=\textwidth]{./cpp_comparison_min}
+\includegraphics[width=\textwidth]{./cpp_comparison_med}
 
 
 \end{document}
